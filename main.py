@@ -217,7 +217,7 @@ if __name__ == "__main__":
     
     while True:
         try:
-            ind = int(input("\nHangi oyunu seçmek istersin? ")) - 1
+            ind = int(input("\nWhich game do you want to select? ")) - 1
             if (ind <= -1 or ind > len(buffer) - 1):
                 print(colors.RED + f"You must select a number between 1 and {len(buffer)}." + colors.ENDC)
                 continue
