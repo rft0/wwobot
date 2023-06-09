@@ -9,6 +9,7 @@ Working mechanism is simple, it creates websocket clients and route them to a ro
 * Python 3.*
 
 ## Usage:
+* If you count on me just use binary executables from `Releases`.
 * Run `INSTALL.bat` to install dependencies for first time.
 * After first time just run `RUN.bat`.
 
