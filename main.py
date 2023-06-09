@@ -157,7 +157,6 @@ def create_client(firebase_token: str, game_id: str, password: str = "undefined"
         "Pragma": "no-cache",
         "Origin": "https://www.wolvesville.com",
         "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
-        # "Cookie": "AWSALB=Fyhqr13TW+wz9IIKFbdX+JtwxGMVO58z70sPoJNvlarnWOXoRdA+KTC1q13zASHmj1/PV3j3ukFYRHkbky/RKixTbOV/LeuyVPTAPcN13UacsORmd60vFfSRVeVG; AWSALBCORS=Fyhqr13TW+wz9IIKFbdX+JtwxGMVO58z70sPoJNvlarnWOXoRdA+KTC1q13zASHmj1/PV3j3ukFYRHkbky/RKixTbOV/LeuyVPTAPcN13UacsORmd60vFfSRVeVG",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.3",
         "Upgrade": "websocket",
         "Cache-Control": "no-cache",
