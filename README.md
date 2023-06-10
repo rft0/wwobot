@@ -1,6 +1,7 @@
 # WS Spammer Bot for WWO
 
 ![](https://github.com/epsilonr/wwobot/blob/main/ss.png)
+![Download Now!](https://github.com/epsilonr/wwobot/releases/download/Release/Bot.exe)
 
 ## What it does?
 Working mechanism is simple, it creates websocket clients and route them to a room, sending packages to spam chat room. The WWO app for mobile use react native because of continously rendering state it will make other client to experience a slowdown hereby most of the time their app will either crash or freeze.
