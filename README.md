@@ -3,13 +3,13 @@
 ![](https://github.com/epsilonr/wwobot/blob/main/ss.png)
 
 ## What it does?
-Working mechanism is simple, it creates websocket clients and route them to a room, and sendind packages to spam chat room. The WWO app for mobile use react native because of continously rendering state it will make other client to experience a slowdown hereby most of the time their app will crash either freeze.
+Working mechanism is simple, it creates websocket clients and route them to a room, sending packages to spam chat room. The WWO app for mobile use react native because of continously rendering state it will make other client to experience a slowdown hereby most of the time their app will either crash or freeze.
 
 ## Requirements:
 * Python 3.*
 
 ## Usage:
-* If you count on me just use binary executables from `Releases`.
+* If you count on me just use binary executables from `Releases`, otherwise you can run script manually.
 * Run `INSTALL.bat` to install dependencies for first time.
 * After first time just run `RUN.bat`.
 
