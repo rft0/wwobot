@@ -1,6 +1,6 @@
 # WS Spammer Bot for WWO
 
-![](https://github.com/epsilonr/wwobot/blob/main/ss.png)
+![](https://github.com/epsilonr/wwobot/blob/main/ss1.png)
 # ![Download Now!](https://github.com/epsilonr/wwobot/releases/download/Release/Bot.exe)
 
 ## What it does?
