@@ -2,12 +2,14 @@ from requests import post, get
 from time import time, sleep
 from concurrent.futures import ThreadPoolExecutor
 from colorama import init
-from ctypes import windll
+from threading import Thread, Event
 import websocket
 import base64
 import random
 import string
+import ctypes
 import json
+import os
 
 MAX_TASKS = 200;
 MAX_THREADS = 50
@@ -21,6 +23,104 @@ class colors:
     ENDC = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
+    
+class setInterval :
+    def __init__(self,interval,action):
+        self.startTime=time()
+        self.interval=interval
+        self.action=action
+        self.stopEvent=Event()
+        thread=Thread(target=self.__setInterval)
+        thread.start()
+
+    def __setInterval(self):
+        nextTime=time()+self.interval
+        while not self.stopEvent.wait(nextTime-time()):
+            nextTime+=self.interval
+            self.action()
+
+    def cancel(self):
+        self.stopEvent.set()
+
+GAP = " " * 8
+
+def red(text):
+    os.system("")
+    faded = ""
+    for line in text.splitlines():
+        green = 250
+        for character in line:
+            green -= 5
+            if green < 0:
+                green = 0
+            faded += (f"\033[38;2;255;{green};0m{character}\033[0m")
+        faded += "\n"
+    return GAP + faded
+
+def blue(text):
+    os.system("")
+    faded = ""
+    for line in text.splitlines():
+        green = 0
+        for character in line:
+            green += 3
+            if green > 255:
+                green = 255
+            faded += (f"\033[38;2;0;{green};255m{character}\033[0m")
+        faded += "\n"
+    return GAP + faded
+
+def water(text):
+    os.system("")
+    faded = ""
+    green = 10
+    for line in text.splitlines():
+        faded += (f"\033[38;2;0;{green};255m{line}\033[0m\n")
+        if not green == 255:
+            green += 15
+            if green > 255:
+                green = 255
+    return faded
+
+def purple(text):
+    os.system("")
+    faded = ""
+    down = False
+
+    for line in text.splitlines():
+        red = 40
+        for character in line:
+            if down:
+                red -= 3
+            else:
+                red += 3
+            if red > 254:
+                red = 255
+                down = True
+            elif red < 1:
+                red = 30
+                down = False
+            faded += (f"\033[38;2;{red};0;220m{character}\033[0m")
+    return GAP + faded
+
+ascii_art = f"""
+
+
+                        /$$      /$$ /$$      /$$  /$$$$$$        /$$$$$$$   /$$$$$$  /$$$$$$$$
+                        | $$  /$ | $$| $$  /$ | $$ /$$__  $$      | $$__  $$ /$$__  $$|__  $$__/
+                        | $$ /$$$| $$| $$ /$$$| $$| $$  \ $$      | $$  \ $$| $$  \ $$   | $$   
+                        | $$/$$ $$ $$| $$/$$ $$ $$| $$  | $$      | $$$$$$$ | $$  | $$   | $$   
+                        | $$$$_  $$$$| $$$$_  $$$$| $$  | $$      | $$__  $$| $$  | $$   | $$   
+                        | $$$/ \  $$$| $$$/ \  $$$| $$  | $$      | $$  \ $$| $$  | $$   | $$   
+                        | $$/   \  $$| $$/   \  $$|  $$$$$$/      | $$$$$$$/|  $$$$$$/   | $$   
+                        |__/     \__/|__/     \__/ \______/       |_______/  \______/    |__/   
+                        
+                        
+                        
+                        {purple("[>] Open source at github.com/epsilonr/wworaidbot")}
+                        
+                        
+"""
 
 def read_file(path: str):
     
@@ -53,6 +153,11 @@ def qev(b: bool):
 
 def get_games(firebase_token: str, lang: str = "tr"):
     
+    proxy = {
+    "http": "http://66.33.210.189:17567",
+    "https": "http://66.33.210.189:17567"
+    }
+    
     # custom?lang={lang}
     res = get(url=f"https://api-game.wolvesville.com/api/public/game/custom", headers={
         "accept": "application/json",
@@ -64,7 +169,7 @@ def get_games(firebase_token: str, lang: str = "tr"):
 
     buffer = []
     
-    print(colors.GREEN + "Active Games:\n" + colors.ENDC)
+    print(purple("~ Active Games:") + "\n")
     
     i = 0
     for game in open_games:
@@ -72,7 +177,7 @@ def get_games(firebase_token: str, lang: str = "tr"):
             continue
 
         i += 1
-        print( colors.GREEN + f"{i}. " + colors.ENDC + f"{game['hostName']} - {game['name']}{qev(game['hasPassword'])}, {game['playerCount']} player(s)")
+        print(red(f"    [{i}] => {game['hostName']} => {game['name']}{qev(game['hasPassword'])} [{game['playerCount']} Player(s)]"))
         buffer.append([game['gameId'], game['hasPassword']])
     
     return buffer
@@ -86,12 +191,15 @@ def get_token(t: str, v: str):
             return res.json()["idToken"]
         else:
             if (res.json()["message"] == "auth/too-many-requests"):
-                print("You probably got IP banned, no worries this ban is temporary.")
+                print(red("[>] You probably got IP banned, no worries this ban is temporary."))
+            else:
+                print(red("[>] Wrong username or password."))
+                print(red("[>] Terminating..."))
             sleep(3)
             exit()
 
     except Exception as e:
-        print(e)
+        print(red("[>] An error occured, terminating..."))
         sleep(3)
         exit()
 
@@ -128,7 +236,7 @@ def create_client(firebase_token: str, game_id: str, password: str = "undefined"
 
             if not "Message ID" in message:
                 try:
-                    json_msg = json.dumps({"msg": f"Arc Dump: {generate_id()}"})
+                    json_msg = json.dumps({"msg": f"https://github.com/epsilonr/wwobot Dump: {generate_id()}"})
                     escaped_json_msg = json_msg.replace('"', '\\"')
                                         
                     ws.send('42["lobby:chat-msg","' + escaped_json_msg + '"]')      
@@ -150,7 +258,7 @@ def create_client(firebase_token: str, game_id: str, password: str = "undefined"
         print(f"Error: {error}")
 
     def on_open(ws):
-        print(f"\nThread ({task}): Connected to the game!\n")
+        print(red(f"\nThread ({task}): Connected to the game!\n"))
         ws.send("40")
             
     ws_header = {
@@ -173,10 +281,42 @@ def create_client(firebase_token: str, game_id: str, password: str = "undefined"
     except Exception as e:
         print(e)
     
+def inter_check():
+    if running:
+        print("*")
+    
 if __name__ == "__main__":
     init()
     
-    windll.kernel32.SetConsoleTitleW(f"WWO - Bot | Arc")
+    ctypes.windll.kernel32.SetConsoleTitleW("~ github.com/epsilonr/wwobot")
+
+    #! Constants from WINAPI
+    GWL_EXSTYLE = -20
+    WS_EX_LAYERED = 0x80000
+    LWA_ALPHA = 0x2
+
+    GWL_STYLE = -16
+    WS_THICKFRAME = 0x00040000
+    WS_MAXIMIZEBOX = 0x00010000
+
+    hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+    
+    window_style = ctypes.windll.user32.GetWindowLongW(hwnd, GWL_STYLE)
+    window_style = window_style & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX
+    ctypes.windll.user32.SetWindowLongW(hwnd, GWL_STYLE, window_style)
+
+    style = ctypes.windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
+    style |= WS_EX_LAYERED
+    ctypes.windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style)
+
+    ctypes.windll.user32.SetLayeredWindowAttributes(hwnd, 0, 240, LWA_ALPHA)
+    
+    ctypes.windll.user32.ShowWindow(hwnd, 1)
+    ctypes.windll.user32.UpdateWindow(hwnd)
+    
+    os.system("cls")
+    
+    print(water(ascii_art))
     
     firebase_token = read_file("token.txt")
 
@@ -184,21 +324,23 @@ if __name__ == "__main__":
         buffer = get_games(firebase_token=firebase_token, lang="")
         
         if len(buffer) <= 0:
-            print(colors.RED + "There is no active game." + colors.ENDC)
+            print(red(f"[>] There is no active game."))
+            print(red(f"[>] Terminating..."))
             sleep(3)
             exit()
     except:
-        print(colors.RED + "Token is invalid.\n" + colors.ENDC)
-        print(colors.GREEN + "Enter your credentials:\n" + colors.ENDC)
+        print(red("[>] Token is invalid.\n"))
+        print(red("[>] Enter your credentials.\n"))
         
-        email = input(colors.GREEN + "Email: " + colors.ENDC)
-        password = input(colors.GREEN + "Password: " + colors.ENDC)
+        email = input(purple(f"[~] Email => ") + colors.CYAN)
+        password = input(purple(f"[~] Password => ") + colors.CYAN)
         
         token = get_token(email, password)
         
         if not token:
             sleep(3)
-            print(colors.RED + "Token is invalid!" + colors.ENDC)
+            print(red("[>] Token is invalid."))
+            print(red("[>] Try again later."))
             exit()
         
         with open("token.txt", "w") as f:
@@ -209,7 +351,8 @@ if __name__ == "__main__":
         buffer = get_games(firebase_token=firebase_token, lang="")
         
         if len(buffer) <= 0:
-            print(colors.RED + "There is no active game." + colors.ENDC)
+            print(red(f"[>] There is no active game."))
+            print(red(f"[>] Terminating..."))
             sleep(3)
             exit()
 
@@ -217,18 +360,21 @@ if __name__ == "__main__":
     
     while True:
         try:
-            ind = int(input("\nWhich game do you want to select? ")) - 1
+            ind = int(input(purple("[~] Which game do you want to select? ") + colors.RED)) - 1
             if (ind <= -1 or ind > len(buffer) - 1):
-                print(colors.RED + f"You must select a number between 1 and {len(buffer)}." + colors.ENDC)
+                print(red(f"[>] You must select a number between 1 - {len(buffer)}."))
                 continue
         except:
-            print(colors.RED + f"You must select a number between 1 and {len(buffer)}." + colors.ENDC)
+            print(red(f"[>] You must select a number between 1 - {len(buffer)}."))
             continue
 
         if(buffer[ind][1]):
-            password = input("\nThis room has password, enter password: ")
+            password = input(blue("[>] This room has password, enter password: "))
 
         break
+
+    inter = setInterval(1, inter_check)
+    inter.cancel()
 
     tasks = [item for item in range(MAX_TASKS)]
     
@@ -238,6 +384,6 @@ if __name__ == "__main__":
         if(running):
             pool.submit(create_client, firebase_token, buffer[ind][0], password, task)
         
-    pool.shutdown()
+    #! DEBUG pool.shutdown()
     
-    # create_client(firebase_token=FIREBASE_TOKEN, game_id=buffer[ind][0], password=password)
+    #! create_client(firebase_token=FIREBASE_TOKEN, game_id=buffer[ind][0], password=password)
