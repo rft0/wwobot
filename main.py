@@ -221,7 +221,7 @@ def create_client(firebase_token: str, game_id: str, password: str = "undefined"
         if "lobby:chat-msg" in message:
             if ("!test") in message:                
                 try:
-                    json_msg = json.dumps({"msg": f"Message ID: {generate_id(length=16)}"})
+                    json_msg = json.dumps({"msg": f"Arc Dupe: {generate_id(length=16)}"})
                     escaped_json_msg = json_msg.replace('"', '\\"')
                                         
                     ws.send('42["lobby:chat-msg","' + escaped_json_msg + '"]')      
@@ -234,7 +234,7 @@ def create_client(firebase_token: str, game_id: str, password: str = "undefined"
             #     except Exception as e:
             #         print(e)
 
-            if not "Message ID" in message:
+            if not "Arc Dupe" in message:
                 try:
                     json_msg = json.dumps({"msg": f"https://github.com/epsilonr/wwobot Dump: {generate_id()}"})
                     escaped_json_msg = json_msg.replace('"', '\\"')
@@ -258,7 +258,7 @@ def create_client(firebase_token: str, game_id: str, password: str = "undefined"
         print(f"Error: {error}")
 
     def on_open(ws):
-        print(red(f"\nThread ({task}): Connected to the game!\n"))
+        print(red(f"Thread ({task}): Connected to the game!"))
         ws.send("40")
             
     ws_header = {
