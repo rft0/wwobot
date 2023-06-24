@@ -16,5 +16,3 @@ Working mechanism is simple, it creates websocket clients and route them to a ro
 
 ## Disclaimer:
 This program is created for educational purposes main goal of this small project is understanding how websockets work and using it in a real world situation, it is not intended to harm any group or company. I do not assume any obligation. Use it up to your own consent.
-
-## ![Download Now!](https://github.com/epsilonr/wwobot/releases/download/Release/Bot.exe)
