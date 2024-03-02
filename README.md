@@ -1,4 +1,4 @@
-# WS Spammer Bot for WWO
+# Packet Spammer Bot for WWO
 
 ![](https://github.com/epsilonr/wwobot/blob/main/ss1.png)
 ![](https://github.com/epsilonr/wwobot/blob/main/ss2.png)
